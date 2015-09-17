@@ -1,0 +1,64 @@
+﻿@model IEnumerable<EjemploModal.Models.Empleado>
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+<button id="btnAgregar">Agregar Empleado</button>
+<ul>
+    @foreach(var empledo in Model)
+    {
+        <li id="@empledo.Id">
+            <header> @empledo.Nombre</header>
+            <p>Edad: @empledo.Edad</p>
+            <p>Id: @empledo.Id</p>
+            <button class="btn-danger eliminar" data-id="@empledo.Id">Eliminar</button>
+            <br />
+        </li>
+    }
+</ul>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+            </div>
+            <div class="modal-body">
+                ¿Esta seguro que queire eliminar este registro?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="btnEliminar" data-eliminar="">Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script type="text/javascript">
+            $('.eliminar').click(function () {
+                var idEliminar = $(this).attr("data-id");
+                $("#btnEliminar").attr("data-eliminar", idEliminar);
+                $("#myModal").modal();
+            });
+            $("#btnEliminar").click(function () {
+                var idEliminar = $(this).attr("data-eliminar");
+                $.ajax({
+                    url: '/Empleado/Eliminar',
+                    type: 'get',
+                    data: { id: idEliminar },
+                    dataType: 'json',
+                    success: function (result) {
+                        console.log("Exito");
+                        $("#" + idEliminar).remove();
+                        $("#myModal").modal('hide');
+                    },
+                    error: function () {
+                        console.log("fallo");
+                    }
+                });
+            });
+    </script>
+}
